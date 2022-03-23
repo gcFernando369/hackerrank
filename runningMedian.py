@@ -23,12 +23,12 @@ class Heap:
         new_node = Node(value)
         
         while True:
-            if self.op == '>': comp = new_node.value > current.value
+            if self.op == '>': comp = new_node.value >= current.value
             elif self.op == '<': comp = new_node.value < current.value
             else: break
 
             if comp: current, new_node = self.shift(current, new_node)
-            else:
+            else:                
                 if current.hl <= current.hr:
                     current.hl += 1
                     if current.left is not None: current = current.left                        
@@ -44,11 +44,10 @@ class Heap:
 
     def comp(self, a, b):        
         best = None
-        if self.op == '>': best = a if a.value > b.value else b
+        if self.op == '>': best = a if a.value >= b.value else b
         elif self.op == '<': best = a if a.value < b.value else b
         return best
 
-    
     def fit_root(self):
         self.deleted += 1
         current = self.root
@@ -60,7 +59,7 @@ class Heap:
             elif len(to_comp) == 1: best = to_comp[0]
             else: best = self.comp(to_comp[0], to_comp[1])
 
-            if self.op == '>': comp = best.value > current.value
+            if self.op == '>': comp = best.value >= current.value
             elif self.op == '<': comp = best.value < current.value
 
             if comp:            
@@ -72,49 +71,48 @@ class Heap:
 
 
 def runningMedian(a):
-
     medians = []
     len_a = len(a)  
 
-    if len_a > 0:
-        medians.append(a[0])
-        if len_a > 1:
-            m = (a[0] + a[1]) / 2
-            medians.append(m)
-            if len_a > 2:
-                if a[0] < a[1]: h_max, h_min = Heap(a[0], '>'), Heap(a[1], '<')
-                else: h_max, h_min = Heap(a[1], '>'), Heap(a[0], '<')
+    if len_a > 0: medians.append(a[0])
+    if len_a > 1: medians.append((a[0] + a[1]) / 2)
+    if len_a > 2:
+        m = medians[1]            
+        if a[0] < a[1]: h_max, h_min = Heap(a[0], '>'), Heap(a[1], '<')
+        else: h_max, h_min = Heap(a[1], '>'), Heap(a[0], '<')
 
-                for i, item in enumerate(a[2:]):
-                    if item < m: h_max.add(item)
-                    else: h_min.add(item)
+        for i, item in enumerate(a[2:]):
+            if item < m: h_max.add(item)
+            else: h_min.add(item)
 
-                    h_min_size, h_max_size = h_min.size(), h_max.size()                     
-                    if abs(h_min_size - h_max_size) > 1:
-                        if h_min_size > h_max_size:
-                            val = h_min.root.value
-                            h_max.add(val)
-                            h_min.root.value = 1e10
-                            h_min.fit_root()
-                        else:
-                            val = h_max.root.value
-                            h_min.add(val)
-                            h_max.root.value = 1e-10
-                            h_max.fit_root()
-                    
-                    print(h_max.root.value, h_min.root.value)
-                    
-                    h_min_size, h_max_size = h_min.size(), h_max.size()                     
-                    if i%2 == 0:
-                        if h_min_size > h_max_size: medians.append(h_min.root.value)
-                        else: medians.append(h_max.root.value)
-                    else: medians.append((h_max.root.value + h_min.root.value)/2)
-                    
-
-
+            h_min_size, h_max_size = h_min.size(), h_max.size()                     
+            if abs(h_min_size - h_max_size) > 1:
+                if h_min_size > h_max_size:
+                    val = h_min.root.value
+                    h_max.add(val)
+                    h_min.root.value = 1e10
+                    h_min.fit_root()
+                else:
+                    val = h_max.root.value
+                    h_min.add(val)
+                    h_max.root.value = 1e-10
+                    h_max.fit_root()
+            
+            print(h_max.root.value, h_min.root.value)
+            
+            h_min_size, h_max_size = h_min.size(), h_max.size()                     
+            if i%2 == 0:
+                if h_min_size > h_max_size: medians.append(h_min.root.value)
+                else: medians.append(h_max.root.value)
+            else: medians.append((h_max.root.value + h_min.root.value)/2)                
     return medians
 
 
 a = [12, 4, 5, 3, 8, 7]
+#a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
 medians = runningMedian(a)
 print(medians)
+
+#t = [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5]
+#print(t)

@@ -15,7 +15,7 @@ def indexes2leves(indexes):
 def swap(levels, qs):
     for q in qs:
         k = q-1
-        nodes = levels[k]        
+        nodes = levels[k]                
         levels[k] = [ [node[1], node[0]] for node in nodes ]        
     return levels
 
@@ -39,36 +39,36 @@ def levels2tree(levels):
                 leafs.append(curr.left)
                 leafs.append(curr.right)  
     return root
-            
 
 def in_orden(root):
     vals = []
-    current = root
     path = [root]
-
-    while len(path) > 0:
-        current = path.pop(0)        
-        if current.left is not None:
-            path.append(current.left)
-            print(current.val, current.left.val)
-        if current.right is not None:
-            path.append(current.right)
-            print(current.val, current.right.val)
+    current = root.left
     
+    while True:        
+        if current.val != -1:
+            path.append(current)
+            current = current.left
+        else:
+            if len(path) == 0: break
+            current = path.pop()
+            vals.append(current.val)            
+            current = current.right
+                
     return vals
             
 def swapNodes(indexes, queries):
     results = []
     levels = indexes2leves(indexes)
     n = len(levels)
-    queries_exp = [ [ i for i in range(q, n, q) ] for q in queries]
-    for qs in queries_exp: levels = swap(levels, qs)
+    queries_exp = [ [ i for i in range(q, n, q) ] for q in queries] 
+
     print(levels)
-
-    root = levels2tree(levels)
-    
-    print(in_orden(root))
-
+    for qs in queries_exp:
+        levels = swap(levels, qs)    
+        print(levels)
+        root = levels2tree(levels)
+        results.append(in_orden(root))
     return results
 
 
@@ -77,6 +77,16 @@ indexes = [ [2, 3], [4, -1], [5, -1], [6, -1],
             [-1, -1], [-1, -1], [-1, -1] ]
 
 queries = [2, 4]
+"""
+indexes= [ [2, 3], [4, 5], [6, -1], [-1, 7], [8, 9], 
+           [10, 11], [12, 13], [-1, 14], [-1, -1],
+           [15, -1], [16, 17], [-1, -1], [-1, -1],
+           [-1, -1], [-1, -1], [-1, -1],[-1, -1] ]
 
+queries = [2, 3]
+"""
 result = swapNodes(indexes, queries)
-#print(result)
+for res in result: print(res)
+
+
+

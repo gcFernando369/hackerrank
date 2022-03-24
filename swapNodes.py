@@ -11,31 +11,25 @@ def indexes2leves(indexes):
             if right > 0: end += 1        
         if start == end: break
     return levels
-
-def swap(levels, qs):
-    for q in qs:
-        k = q-1
-        nodes = levels[k]                
-        levels[k] = [ [node[1], node[0]] for node in nodes ]        
-    return levels
-
 class Node:
-    def __init__(self, val):
+    def __init__(self, val, level=0):
         self.val = val
         self.left = None
         self.right = None
+        self.level = level
 
 def levels2tree(levels):
-    root = Node(1)    
+    root = Node(1, 1)    
     leafs = [root] 
-    for level in levels:        
+    for li, level in enumerate(levels):        
         nodes = [node for node in level]
         while len(nodes) > 0:                                       
             curr = leafs.pop(0)            
             if curr.val > 0:
                 left, right = nodes.pop(0)
-                curr.left = Node(left)
-                curr.right = Node(right)
+                level_ = li + 2
+                curr.left = Node(left, level_)
+                curr.right = Node(right, level_)
                 leafs.append(curr.left)
                 leafs.append(curr.right)  
     return root
@@ -56,35 +50,41 @@ def in_orden(root):
             current = current.right
                 
     return vals
+
+def swap(root, qs):
+    path = [root]
+    while len(path) > 0:
+        curr = path.pop(0)        
+        if curr.level in qs:
+            tmp = curr.left
+            curr.left = curr.right
+            curr.right = tmp
+        
+        if curr.left is not None: path.append(curr.left)
+        if curr.right is not None: path.append(curr.right)
+        
+    return root
             
 def swapNodes(indexes, queries):
     results = []
-    levels = indexes2leves(indexes)
+    levels = indexes2leves(indexes)    
+    root = levels2tree(levels)    
+
     n = len(levels)
     queries_exp = [ [ i for i in range(q, n, q) ] for q in queries] 
 
-    print(levels)
     for qs in queries_exp:
-        levels = swap(levels, qs)    
-        print(levels)
-        root = levels2tree(levels)
+        root = swap(root, qs)            
         results.append(in_orden(root))
     return results
 
-
-indexes = [ [2, 3], [4, -1], [5, -1], [6, -1],
-            [7, 8], [-1, 9], [-1, -1], [10, 11],
-            [-1, -1], [-1, -1], [-1, -1] ]
-
-queries = [2, 4]
-"""
 indexes= [ [2, 3], [4, 5], [6, -1], [-1, 7], [8, 9], 
            [10, 11], [12, 13], [-1, 14], [-1, -1],
            [15, -1], [16, 17], [-1, -1], [-1, -1],
            [-1, -1], [-1, -1], [-1, -1],[-1, -1] ]
 
 queries = [2, 3]
-"""
+
 result = swapNodes(indexes, queries)
 for res in result: print(res)
 

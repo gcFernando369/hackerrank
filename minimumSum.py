@@ -1,28 +1,29 @@
-
-
+def get_sum(a, b):
+    array2int = lambda x: int(''.join(x))
+    return array2int(a) + array2int(b)
 
 def get_minimum_sum(K):
-    digits = [ int(digit) for digit in str(K) ]
+    digits = [ digit for digit in str(K) ]
     digits.sort()
-    n_digits = len(digits)
+       
+    a, b = digits[:1], digits[1:]
+    sum = get_sum(a, b)
 
-    min_sum = int('9'*n_digits)
-    best = None
-    
+    while True:
+        changed = False
+        for i, item in enumerate(b):
+            a_tmp = a + [item]
+            b_tmp = b[:i]+b[i+1:]
+            sum_tmp = get_sum(a_tmp, b_tmp)
+            if sum_tmp < sum:
+                sum = sum_tmp
+                best = [a_tmp, b_tmp]
+                changed = True
+        
+        a, b = best
+        if not changed or len(a) <= 1 or len(b) <= 1: break
 
-
-    for i, a in enumerate(digits):
-        remain_digits_0 = digits[:i]+digits[i+1:] 
-        for j, b in enumerate(remain_digits_0):
-            remain_digits_1 = remain_digits_0[:j]+remain_digits_0[j+1:]
-            for l, c in enumerate(remain_digits_1):
-                remain_digits_2 = remain_digits_1[:l]+remain_digits_1[l+1:]
-                for m, d in enumerate(remain_digits_2):
-                    int()
-                    
-
-
-    return 0
+    return sum
 
 tests = [[4891, 67], [8732, 65], [9008, 17],
         [516, 21], [4755, 102]]
@@ -30,4 +31,3 @@ tests = [[4891, 67], [8732, 65], [9008, 17],
 for test in tests:
     res = get_minimum_sum(test[0])
     print(test[0], test[1], res, res == test[1])
-    break
